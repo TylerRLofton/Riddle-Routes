@@ -1,5 +1,5 @@
 # Riddle-Routes
-##ERAU Pathfinding 
+## ERAU Pathfinding 
 ### Creators
 **Jackson Salyards** <br>
 **Tyler Lofton** <br>
