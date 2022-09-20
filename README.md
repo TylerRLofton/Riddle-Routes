@@ -1,6 +1,8 @@
 # Riddle-Routes
-## Jackson Salyards
-## Tyler Lofton
-## Caroline Terre
-## Charels Heley
-ERAU Pathfinding 
+##ERAU Pathfinding 
+### Creators
+** Jackson Salyards
+** Tyler Lofton
+** Caroline Terre
+** Charels Heley
+s
