@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Using OpenLayers with Vite</title>
+    <meta charset="UTF-8">
+    <title>Riddle Routes</title>
+    <link rel="stylesheet" href="node_modules/ol/ol.css">
+    <style>
+      .map {
+        height: 960px;
+        width: 100%;
+      }
+    </style>
   </head>
   <body>
-    <div id="map"></div>
-    <script type="module" src="./main.js"></script>
+    <div id="map" class="map"></div>
+    <div> <button id = "ToggleBlueLights">Toggle Blue Light Towers</button>
+    </div>
+    <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
+    <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
+    <script type="module" src="main.js"></script>
   </body>
 </html>
