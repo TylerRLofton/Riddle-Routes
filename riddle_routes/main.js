@@ -14,6 +14,8 @@ import {defaults as defaultControls} from 'ol/control'
 
 const blueLightTowerCount = 1;
 const blueLightTower = new Array(blueLightTowerCount);
+var blueLightTowerPositionX = new Array(blueLightTowerCount);
+var blueLightTowerPositionY = new Array(blueLightTowerCount);
 
 for (let i = 0; i < blueLightTowerCount; ++i) {
   blueLightTower[i] = new Feature({
