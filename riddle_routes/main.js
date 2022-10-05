@@ -12,20 +12,23 @@ import { transform } from "ol/proj";
 import ZoomSlider from 'ol/control/ZoomSlider';
 import {defaults as defaultControls} from 'ol/control'
 
-const blueLightTowerCount = 1;
+var blueLightTowerCount = 4;
 const blueLightTower = new Array(blueLightTowerCount);
 var blueLightTowerPositionX = new Array(blueLightTowerCount);
 var blueLightTowerPositionY = new Array(blueLightTowerCount);
 
+for(let i = 0; i <= blueLightTowerCount; i++){
+    blueLightTowerPositionX[i] = 29.18818 + Math.random() * 0.0001 * i;
+    blueLightTowerPositionY[i] = -81.04965 - Math.random() * 0.0001 * i;
+}
 for (let i = 0; i < blueLightTowerCount; ++i) {
   blueLightTower[i] = new Feature({
-    geometry: new Point(transform([-81.04935, 29.18818], "EPSG:4326", "EPSG:3857")),
-    labelPoint: new Point(transform([-81.04965, 29.18818], "EPSG:4326", "EPSG:3857")),
+    geometry: new Point(transform([blueLightTowerPositionY[i], blueLightTowerPositionX[i]], "EPSG:4326", "EPSG:3857")),
+    labelPoint: new Point(transform([blueLightTowerPositionY[i], blueLightTowerPositionX[i]], "EPSG:4326", "EPSG:3857")),
     size: 15,
-    name: 'My_point',
+    name: 'Blue Light Tower'+ i,
   });
 };
-
 const BlueLightstyle = {"15": new Style({
     image: new RegularShape({
       points: 5,
@@ -37,12 +40,10 @@ const BlueLightstyle = {"15": new Style({
     })
   }),
 };
-
 const BlueLightvectorSource = new VectorSource({
   features: blueLightTower,
   wrapX: false
 });
-
 const BlueLightvector = new VectorLayer({
   source: BlueLightvectorSource,
   style: function (blueLightTower) {
@@ -52,19 +53,16 @@ const BlueLightvector = new VectorLayer({
 
 const mapView = new View({
   center: transform([-81.04934, 29.18818], "EPSG:4326", "EPSG:3857"),
-  zoom: 10,
+  zoom: 18,
   extent: [-9024000, 3398000,  -9021000, 3401000 ],
 });
-
 const map = new Map({
   target: 'map',
   layers: [new TileLayer({source: new OSM() }), BlueLightvector],
   view: mapView,
   controls: defaultControls().extend([new ZoomSlider()]),
 });
-
 document.getElementById('ToggleBlueLights').addEventListener('click', function () {
  BlueLightvector.setVisible(!BlueLightvector.getVisible());
 });
-
 map.render();
