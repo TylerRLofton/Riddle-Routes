@@ -1,6 +1,6 @@
-# OpenLayers + Vite
+# Running Riddle Routes
 
-This example demonstrates how the `ol` package can be used with [Vite](https://vitejs.dev/).
+This example demonstrates how this program is used with [Vite](https://vitejs.dev/).
 
 To get started, run the following (requires Node 14+):
 
@@ -8,11 +8,6 @@ To get started, run the following (requires Node 14+):
 
 Then change into your new `my-app` directory and start a development server (available at http://localhost:5173):
 
-    cd my-app
+    cd riddle_routes
     npm start
 
-To generate a build ready for production:
-
-    npm run build
-
-Then deploy the contents of the `dist` directory to your server.  You can also run `npm run serve` to serve the results of the `dist` directory for preview.
