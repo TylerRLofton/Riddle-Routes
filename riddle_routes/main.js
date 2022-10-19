@@ -38,13 +38,13 @@ const BlueLightstyle = {
       stroke: new Stroke({ color: 'white', width: 1 }),
     }),
     text: new Text({
-      font: '7px sans-serif',
+      font: '12px sans-serif',
       text: 'Blue Light Tower',
       fill: new Fill({
-        color: 'black',
+        color: 'blue',
       }),
       offsetY: -10,
-      padding: [20, 2, 2, 2],
+      padding: [2, 2, 2, 2],
     }),
   }),
 };
