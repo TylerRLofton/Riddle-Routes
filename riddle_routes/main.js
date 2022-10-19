@@ -3,7 +3,7 @@ import Map from "ol/Map";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import View from "ol/View";
-import { Circle as CircleStyle, Fill, RegularShape, Stroke, Style } from "ol/style";
+import { Circle as CircleStyle, Fill, RegularShape, Stroke, Style, Text } from "ol/style";
 import { LineString, Point } from "ol/geom";
 import { getVectorContext } from "ol/render";
 import TileLayer from "ol/layer/Tile";
@@ -12,7 +12,7 @@ import { transform } from "ol/proj";
 import ZoomSlider from 'ol/control/ZoomSlider';
 import {defaults as defaultControls} from 'ol/control'
 
-var blueLightTowerCount = 4;
+var blueLightTowerCount = 15;
 const blueLightTower = new Array(blueLightTowerCount);
 var blueLightTowerPositionX = new Array(blueLightTowerCount);
 var blueLightTowerPositionY = new Array(blueLightTowerCount);
@@ -24,20 +24,28 @@ for(let i = 0; i <= blueLightTowerCount; i++){
 for (let i = 0; i < blueLightTowerCount; ++i) {
   blueLightTower[i] = new Feature({
     geometry: new Point(transform([blueLightTowerPositionY[i], blueLightTowerPositionX[i]], "EPSG:4326", "EPSG:3857")),
-    labelPoint: new Point(transform([blueLightTowerPositionY[i], blueLightTowerPositionX[i]], "EPSG:4326", "EPSG:3857")),
-    size: 15,
-    name: 'Blue Light Tower'+ i,
+   size: 10,
   });
 };
-const BlueLightstyle = {"15": new Style({
+const BlueLightstyle = {
+  "10": new Style({
     image: new RegularShape({
       points: 5,
-      radius: 7,
-      radius2: 3,
+      radius: 5,
+      radius2: 7,
       angle: 0,
       fill: new Fill({ color: 'blue' }),
-      stroke: new Stroke({ color: 'black', width: 1 })
-    })
+      stroke: new Stroke({ color: 'white', width: 1 }),
+    }),
+    text: new Text({
+      font: '7px sans-serif',
+      text: 'Blue Light Tower',
+      fill: new Fill({
+        color: 'black',
+      }),
+      offsetY: -10,
+      padding: [20, 2, 2, 2],
+    }),
   }),
 };
 const BlueLightvectorSource = new VectorSource({
@@ -47,10 +55,9 @@ const BlueLightvectorSource = new VectorSource({
 const BlueLightvector = new VectorLayer({
   source: BlueLightvectorSource,
   style: function (blueLightTower) {
-    return BlueLightstyle[blueLightTower.get("size")];
-  }
+  return BlueLightstyle[blueLightTower.get('size')];
+  },
 });
-
 const mapView = new View({
   center: transform([-81.04934, 29.18818], "EPSG:4326", "EPSG:3857"),
   zoom: 18,
