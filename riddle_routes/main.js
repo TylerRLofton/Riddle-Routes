@@ -1,5 +1,6 @@
 import Feature from "ol/Feature";
 import Map from "ol/Map";
+import Overlay from 'ol/Overlay';
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import View from "ol/View";
@@ -11,6 +12,9 @@ import OSM from "ol/source/OSM";
 import { transform } from "ol/proj";
 import ZoomSlider from 'ol/control/ZoomSlider';
 import {defaults as defaultControls} from 'ol/control'
+import {fromLonLat, toLonLat} from 'ol/proj';
+import {toStringHDMS} from 'ol/coordinate';
+
 
 var blueLightTowerCount = 15;
 const blueLightTower = new Array(blueLightTowerCount);
@@ -71,5 +75,39 @@ const map = new Map({
 });
 document.getElementById('ToggleBlueLights').addEventListener('click', function () {
  BlueLightvector.setVisible(!BlueLightvector.getVisible());
+});
+
+const pos = fromLonLat([-81.047220, 29.19024]);
+const popup = new Overlay({
+  element: document.getElementById('popup'),
+});
+map.addOverlay(popup);
+
+const riddle = new Overlay({
+  position: pos,
+  element: document.getElementById('Embry-Riddle'),
+});
+
+map.addOverlay(riddle);
+
+const element = popup.getElement();
+
+map.on('click', function (evt) {
+  const coordinate = evt.coordinate;
+  const hdms = toStringHDMS(toLonLat(coordinate));
+  popup.setPosition(coordinate);
+  //blueLightTower[1].setGeometry(coordinate);
+  let popover = bootstrap.Popover.getInstance(element);
+  if (popover) {
+    popover.dispose();
+  }
+  popover = new bootstrap.Popover(element, {
+    animation: false,
+    container: element,
+    content: '<p>The location you clicked was:</p><code>' + hdms + '</code>',
+    html: true,
+    placement: 'top',
+  });
+  popover.show();
 });
 map.render();

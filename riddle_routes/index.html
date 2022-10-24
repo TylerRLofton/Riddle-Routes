@@ -3,23 +3,48 @@
   <head>
     <meta charset="UTF-8">
     <title>Riddle Routes</title>
-    <link rel = "icon" href = 
-    "https://img.myloview.com/stickers/rr-letter-logo-design-initial-letters-rr-logo-icon-abstract-letter-rr-r-r-minimal-logo-design-template-r-r-letter-design-vector-with-black-colors-rr-logo-700-203893947.jpg" 
-    type = "image/x-icon">
+    <link rel = "icon" href =  "https://img.myloview.com/stickers/rr-letter-logo-design-initial-letters-rr-logo-icon-abstract-letter-rr-r-r-minimal-logo-design-template-r-r-letter-design-vector-with-black-colors-rr-logo-700-203893947.jpg" type = "image/x-icon">
     <link rel="stylesheet" href="node_modules/ol/ol.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
     <style>
       .map {
         height: 960px;
         width: 100%;
+      }
+      #marker {
+        width: 20px;
+        height: 20px;
+        border: 1px solid #088;
+        border-radius: 10px;
+        background-color: #0FF;
+        opacity: 0.5;
+      }
+      #vienna {
+        text-decoration: none;
+        color: white;
+        font-size: 11pt;
+        font-weight: bold;
+        text-shadow: black 0.1em 0.1em 0.2em;
+      }
+      .popover-body {
+        min-width: 276px;
       }
     </style>
   </head>
   <body>
     <div id="map" class="map"></div>
     <div> <button id = "ToggleBlueLights">Toggle Blue Light Towers</button>
+    </div>  
+    <div style="display: none;">
+      <!-- Clickable label for Vienna -->
+      <a class="overlay" id="Embry-Riddle" target="_blank" href="https://erau.edu/">Embry-Riddle</a>
+      <div id="marker" title="Marker"></div>
+      <!-- Popup -->
+      <div id="popup"></div>
     </div>
     <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
     <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="main.js"></script>
   </body>
 </html>
