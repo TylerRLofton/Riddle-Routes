@@ -1,9 +1,11 @@
 #  Vite
 
-Then change into the "riddle_routes" directory and start a development server (available at http://localhost:5173):
+First make sure you are in the "riddle_routes" directory. 
+Then fun the following commands:
 
     cd riddle_routes
     npm start
+This will start the program and create a local server you can join.
 
 To generate a build ready for production:
 
