@@ -10,6 +10,8 @@
     "vite": "^3.0.9"
   },
   "dependencies": {
+    "csvtojson": "latest",
+    "json2csv": "latest",
     "ol": "latest"
   }
 }
