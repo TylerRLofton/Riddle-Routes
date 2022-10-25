@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
     <style>
       .map {
-        height: 960px;
+        height: 1200px;
         width: 100%;
       }
       #marker {
@@ -29,11 +29,21 @@
       .popover-body {
         min-width: 276px;
       }
+      .popover-title.close{
+        position: relative;
+        bottom: 30px;
+       }
+       .ToggleBlueLights{
+      	position: absolute;
+        top: 0px;
+        right: 0px;
+       }
+
     </style>
   </head>
   <body>
     <div id="map" class="map"></div>
-    <div> <button id = "ToggleBlueLights">Toggle Blue Light Towers</button>
+    <div class= "ToggleBlueLights"> <button id = "ToggleBlueLights">Toggle Blue Light Towers</button>
     </div>  
     <div style="display: none;">
       <!-- Clickable label for Vienna -->
@@ -42,7 +52,9 @@
       <!-- Popup -->
       <div id="popup"></div>
     </div>
-    <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
+    
+
+   <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
     <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="main.js"></script>

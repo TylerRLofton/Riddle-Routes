@@ -17,7 +17,7 @@ import {toStringHDMS} from 'ol/coordinate';
 
 
 var blueLightTowerCount = 15;
-const blueLightTower = new Array(blueLightTowerCount);
+var blueLightTower = new Array(blueLightTowerCount);
 var blueLightTowerPositionX = new Array(blueLightTowerCount);
 var blueLightTowerPositionY = new Array(blueLightTowerCount);
 
@@ -73,6 +73,7 @@ const map = new Map({
   view: mapView,
   controls: defaultControls().extend([new ZoomSlider()]),
 });
+
 document.getElementById('ToggleBlueLights').addEventListener('click', function () {
  BlueLightvector.setVisible(!BlueLightvector.getVisible());
 });
@@ -92,7 +93,9 @@ map.addOverlay(riddle);
 
 const element = popup.getElement();
 
-map.on('click', function (evt) {
+map.on('click', CreatePopup);
+
+function CreatePopup (evt) {
   const coordinate = evt.coordinate;
   const hdms = toStringHDMS(toLonLat(coordinate));
   popup.setPosition(coordinate);
@@ -102,12 +105,15 @@ map.on('click', function (evt) {
     popover.dispose();
   }
   popover = new bootstrap.Popover(element, {
-    animation: false,
+    animation: true,
     container: element,
-    content: '<p>The location you clicked was:</p><code>' + hdms + '</code>',
     html: true,
-    placement: 'top',
-  });
-  popover.show();
-});
+    title: 'Cordinates <a href="#" class="close" data-dismiss="alert">&times;</a>',
+    content: '<p>You clicked at:</p>' + '<code>' + hdms + '</code>',
+    placement: 'auto',
+    trigger: 'click',  
+  }); 
+ popover.show();
+};
+
 map.render();
