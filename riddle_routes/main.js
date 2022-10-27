@@ -14,23 +14,31 @@ import ZoomSlider from 'ol/control/ZoomSlider';
 import {defaults as defaultControls} from 'ol/control'
 import {fromLonLat, toLonLat} from 'ol/proj';
 import {toStringHDMS} from 'ol/coordinate';
+import Select from 'ol/interaction/Select';
 
 
 var blueLightTowerCount = 15;
 var blueLightTower = new Array(blueLightTowerCount);
 var blueLightTowerPositionX = new Array(blueLightTowerCount);
 var blueLightTowerPositionY = new Array(blueLightTowerCount);
+var startX;
+var startY;
+var endX;
+var endY;
+
 
 for(let i = 0; i <= blueLightTowerCount; i++){
     blueLightTowerPositionX[i] = 29.18818 + Math.random() * 0.0001 * i;
     blueLightTowerPositionY[i] = -81.04965 - Math.random() * 0.0001 * i;
 }
+
 for (let i = 0; i < blueLightTowerCount; ++i) {
   blueLightTower[i] = new Feature({
     geometry: new Point(transform([blueLightTowerPositionY[i], blueLightTowerPositionX[i]], "EPSG:4326", "EPSG:3857")),
    size: 10,
   });
 };
+
 const BlueLightstyle = {
   "10": new Style({
     image: new RegularShape({
@@ -52,21 +60,25 @@ const BlueLightstyle = {
     }),
   }),
 };
+
 const BlueLightvectorSource = new VectorSource({
   features: blueLightTower,
   wrapX: false
 });
+
 const BlueLightvector = new VectorLayer({
   source: BlueLightvectorSource,
   style: function (blueLightTower) {
   return BlueLightstyle[blueLightTower.get('size')];
   },
 });
+
 const mapView = new View({
   center: transform([-81.04934, 29.18818], "EPSG:4326", "EPSG:3857"),
   zoom: 18,
   extent: [-9024000, 3398000,  -9021000, 3401000 ],
 });
+
 const map = new Map({
   target: 'map',
   layers: [new TileLayer({source: new OSM() }), BlueLightvector],
@@ -77,43 +89,42 @@ const map = new Map({
 document.getElementById('ToggleBlueLights').addEventListener('click', function () {
  BlueLightvector.setVisible(!BlueLightvector.getVisible());
 });
-
 const pos = fromLonLat([-81.047220, 29.19024]);
-const popup = new Overlay({
-  element: document.getElementById('popup'),
+var posX
+var posY
+
+document.addEventListener('click', function (evt) {
+   posX = evt.clientX;
+   posY = evt.clientY;
+//  console.log(posX, posY);
 });
-map.addOverlay(popup);
 
-const riddle = new Overlay({
-  position: pos,
-  element: document.getElementById('Embry-Riddle'),
+document.getElementById('popupClose').addEventListener('click', function () {
+  document.querySelector('.ol-popup').style.display = 'none';
 });
 
-map.addOverlay(riddle);
 
-const element = popup.getElement();
+map.on('click', function (evt) {
+  var feature = map.forEachFeatureAtPixel(evt.pixel,
+      function (feature) {
+        document.querySelector('.ol-popup').style.top = posY + 'px';
+        if (feature.get('size') == 10) {
+          document.querySelector('.ol-popup').style.left = evt.clientX + 'px';
+          document.querySelector('.ol-popup').style.display = 'block';
+          }
+      });
+      document.getElementById('saveStart').addEventListener('click', function () {
+        startX = evt.coordinate[0];
+        startY = evt.coordinate[1];
+        console.log(startX, startY);
+      });
+      document.getElementById('saveStop').addEventListener('click', function () {
+        endX = evt.coordinate[0];
+        endtY = evt.coordinate[1];
+        console.log(endX, endY);
+      });
+});
 
-map.on('click', CreatePopup);
 
-function CreatePopup (evt) {
-  const coordinate = evt.coordinate;
-  const hdms = toStringHDMS(toLonLat(coordinate));
-  popup.setPosition(coordinate);
-  //blueLightTower[1].setGeometry(coordinate);
-  let popover = bootstrap.Popover.getInstance(element);
-  if (popover) {
-    popover.dispose();
-  }
-  popover = new bootstrap.Popover(element, {
-    animation: true,
-    container: element,
-    html: true,
-    title: 'Cordinates <a href="#" class="close" data-dismiss="alert">&times;</a>',
-    content: '<p>You clicked at:</p>' + '<code>' + hdms + '</code>',
-    placement: 'auto',
-    trigger: 'click',  
-  }); 
- popover.show();
-};
 
 map.render();

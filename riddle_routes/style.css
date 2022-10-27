@@ -9,4 +9,51 @@ html, body {
   top: 0;
   bottom: 0;
   width: 100%;
+}.map {
+  height: 1200px;
+  width: 100%;
 }
+#marker {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #088;
+  border-radius: 10px;
+  background-color: #0FF;
+  opacity: 0.5;
+}
+#riddle {
+  text-decoration: none;
+  color: white;
+  font-size: 11pt;
+  font-weight: bold;
+  text-shadow: black 0.1em 0.1em 0.2em;
+}
+.ToggleBlueLights{
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+#popup {  
+  display: none;
+}
+.ol-popup{
+  position: absolute;
+  background-color: grey;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  padding: 15px;
+  top: 12px;
+  left: 50px;
+  min-width: 160px;
+}
+.popupButton{
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  text-rendering: auto;
+  border: 0px solid #ccc;
+}
+  
+
+
