@@ -16,7 +16,9 @@ import {fromLonLat, toLonLat} from 'ol/proj';
 import {toStringHDMS} from 'ol/coordinate';
 import Select from 'ol/interaction/Select';
 
-
+const pos = fromLonLat([-81.047220, 29.19024]);
+var posX
+var posY
 var blueLightTowerCount = 15;
 var blueLightTower = new Array(blueLightTowerCount);
 var blueLightTowerPositionX = new Array(blueLightTowerCount);
@@ -25,7 +27,8 @@ var startX;
 var startY;
 var endX;
 var endY;
-
+var startRouteMarker;
+var endRouteMarker;
 
 for(let i = 0; i <= blueLightTowerCount; i++){
     blueLightTowerPositionX[i] = 29.18818 + Math.random() * 0.0001 * i;
@@ -61,6 +64,34 @@ const BlueLightstyle = {
   }),
 };
 
+
+
+const startRouteStyle = { "11": new Style({
+    image: new RegularShape({
+      points: 5,
+      radius: 5,
+      radius2: 7,
+      angle: 0,
+      fill: new Fill({ color: 'green' }),
+      stroke: new Stroke({ color: 'white', width: 1 }),
+    })
+  })
+};
+startRouteMarker = new Feature({
+  geometry: new Point(transform([-81.047220, 29.19024], "EPSG:4326", "EPSG:3857")),
+  size: 11,
+});
+const routeMarkerVecorSource = new VectorSource({
+  features: [startRouteMarker],
+  wrapX: false,
+});
+const routeMarkerVectorLayer = new VectorLayer({
+  source: routeMarkerVecorSource,
+  style: function (feature) {
+    return startRouteStyle[feature.get("size")];
+  },
+});
+
 const BlueLightvectorSource = new VectorSource({
   features: blueLightTower,
   wrapX: false
@@ -81,7 +112,7 @@ const mapView = new View({
 
 const map = new Map({
   target: 'map',
-  layers: [new TileLayer({source: new OSM() }), BlueLightvector],
+  layers: [new TileLayer({source: new OSM() }), BlueLightvector, routeMarkerVectorLayer],
   view: mapView,
   controls: defaultControls().extend([new ZoomSlider()]),
 });
@@ -89,14 +120,12 @@ const map = new Map({
 document.getElementById('ToggleBlueLights').addEventListener('click', function () {
  BlueLightvector.setVisible(!BlueLightvector.getVisible());
 });
-const pos = fromLonLat([-81.047220, 29.19024]);
-var posX
-var posY
+
 
 document.addEventListener('click', function (evt) {
    posX = evt.clientX;
    posY = evt.clientY;
-//  console.log(posX, posY);
+  console.log(posX, posY);
 });
 
 document.getElementById('popupClose').addEventListener('click', function () {
@@ -105,24 +134,30 @@ document.getElementById('popupClose').addEventListener('click', function () {
 
 
 map.on('click', function (evt) {
+  document.getElementById('saveStart').addEventListener('click', function () {
+    startX = evt.coordinate[0];
+    startY = evt.coordinate[1];
+    console.log(startX, startY);
+
+    startRouteMarker.setVisible('false');
+
+  });
+  document.getElementById('saveStop').addEventListener('click', function () {
+    endX = evt.coordinate[0];
+    endtY = evt.coordinate[1];
+    console.log(endX, endY);
+  });
   var feature = map.forEachFeatureAtPixel(evt.pixel,
       function (feature) {
         document.querySelector('.ol-popup').style.top = posY + 'px';
+        document.querySelector('.ol-popup').style.left = posX + 'px';
+        document.querySelector('.ol-popup').style.display = 'block';
         if (feature.get('size') == 10) {
-          document.querySelector('.ol-popup').style.left = evt.clientX + 'px';
-          document.querySelector('.ol-popup').style.display = 'block';
+         
+          
           }
       });
-      document.getElementById('saveStart').addEventListener('click', function () {
-        startX = evt.coordinate[0];
-        startY = evt.coordinate[1];
-        console.log(startX, startY);
-      });
-      document.getElementById('saveStop').addEventListener('click', function () {
-        endX = evt.coordinate[0];
-        endtY = evt.coordinate[1];
-        console.log(endX, endY);
-      });
+    
 });
 
 
