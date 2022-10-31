@@ -10,6 +10,7 @@
     "vite": "latest"
   },
   "dependencies": {
+    "csv-parse": "^5.3.1",
     "csvtojson": "^2.0.10",
     "fs": "^0.0.1-security",
     "json2csv": "^5.0.7",

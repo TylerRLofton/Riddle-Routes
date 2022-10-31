@@ -1,14 +1,17 @@
-const fs = require("fs");
-const csv = require("csvtojson");
-const { Parser } = require('json2csv');
+const fs = require('fs');
+const { parse } = require('csv-parse');
 
-(async () => {
+const handicapData = [];
 
-    const handicap = await csv().fromFile("handicap.csv");
-    
-    console.log(handicap);
-
-    const handicapInCsv = new Parser({ fields: ["Latitude", "Longitude"] }).parse(handicap);
-    fs.writeFileSync("handicap.csv", handicapInCsv);
-
-})();
+fs.createReadStream(__dirname + '/handicap.csv')
+    .pipe(
+        parse({
+            delimiter: ","
+        })
+    )
+    .on('data', function (dataRow) {
+        handicapData.push(dataRow);
+    })
+    .on('end', function () {
+        console.log(handicapData);
+    });
