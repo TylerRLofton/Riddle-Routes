@@ -40,9 +40,9 @@ html, body {
   position: absolute;
   background-color: grey;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 1px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  padding: 15px;
+  padding: 9px;
   top: 12px;
   left: 50px;
   min-width: 160px;
