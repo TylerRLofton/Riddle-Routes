@@ -183,6 +183,8 @@ document.getElementById('saveStop').addEventListener('click', function () {
 
 document.getElementById('startPathfinding').addEventListener('click', function () {
   
+  document.getElementById('startPathfinding').textContent = 'Pathfinding working';
+
   var request = new XMLHttpRequest();
 
   request.open('GET', getRoute);
@@ -231,7 +233,7 @@ document.getElementById('startPathfinding').addEventListener('click', function (
       }
       };
       request.send();
-      document.getElementById('startPathfinding').textContent = 'Pathfinding Started';
+   
 
 });
 

@@ -58,7 +58,14 @@ html, body {
   content: "X";
 }
 .endRoute{
-  
+  text-rendering: optimizeSpeed;
+  font-size: 15px;
+}.startRoute{
+  text-rendering: optimizeSpeed;
+  font-size: 15px;
+}.startPathfinding{
+  text-rendering: optimizeSpeed;
+  font-size: 15px;
 }
   
 
