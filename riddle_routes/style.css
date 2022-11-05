@@ -47,12 +47,18 @@ html, body {
   left: 50px;
   min-width: 160px;
 }
-.popupButton{
+.close{
   position: absolute;
   top: 0px;
   right: 0px;
   text-rendering: auto;
   border: 0px solid #ccc;
+  font-size: x-small;
+  border-radius: 0%;
+  content: "X";
+}
+.endRoute{
+  
 }
   
 

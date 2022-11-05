@@ -149,7 +149,7 @@ document.getElementById('ToggleBlueLights').addEventListener('click', function (
 });
 
 
-document.getElementById('popupClose').addEventListener('click', function () {
+document.getElementById("popupClose").addEventListener('click', function () {
   document.querySelector('.ol-popup').style.display = 'none';
   document.getElementById('startPathfinding').style.display ='none';
 });
@@ -158,7 +158,7 @@ document.getElementById('saveStart').addEventListener('click', function () {
   startX = posX;
   startY = posY;
   startLongLat = toLonLat([startX, startY]);
-  document.getElementById('saveStart').textContent = 'Start Saved at ' + toLonLat([startX, startY]);
+  document.getElementById('saveStart').textContent = 'Start point saved';
 
  getRoute = "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start="+startLongLat[0]+",%20"+ startLongLat[1] +"&end="+ endlongLat[0] + ",%20" + endlongLat[1];
  //console.log(startLongLat);
@@ -172,16 +172,17 @@ document.getElementById('saveStop').addEventListener('click', function () {
   endX = posX;
   endY = posY;
   document.getElementById('startPathfinding').style.display ='block';
-  document.getElementById('startPathfinding').textContent = 'GO!';
+  document.getElementById('startPathfinding').textContent = 'Start Pathfinding';
   endlongLat = toLonLat([endX, endY]);
   getRoute = "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start="+startLongLat[0]+",%20"+ startLongLat[1] +"&end="+ endlongLat[0] + ",%20" + endlongLat[1];
-  document.getElementById('saveStop').textContent = 'End Saved at ' + toLonLat([endX, endY]);
+  document.getElementById('saveStop').textContent = 'End point saved';
   //console.log(getRoute);
   //console.log(endlongLat);
-
+  routePointsVectorSource.clear();
 });
 
 document.getElementById('startPathfinding').addEventListener('click', function () {
+  
   var request = new XMLHttpRequest();
 
   request.open('GET', getRoute);
@@ -204,7 +205,7 @@ document.getElementById('startPathfinding').addEventListener('click', function (
         routeLine = new Feature({
          geometry: new LineString(routePoints),
         });
-        
+        //routePointsVectorSource.clear();
          routePointsVectorSource = new VectorSource({
           features: [routeLine],
           wrapX: false,
@@ -214,11 +215,11 @@ document.getElementById('startPathfinding').addEventListener('click', function (
           source: routePointsVectorSource,
           style: new Style({
             fill: new Fill({
-              color: 'Blue ',
+              color: 'blue ',
             }),
             stroke: new Stroke({
               color: 'blue',
-              width: 5,
+              width: 7,
             }),
           }),
         });
