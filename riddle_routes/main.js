@@ -33,6 +33,7 @@ var startY;
 var endX;
 var endY;
 var startRouteMarker;
+var endRouteMarker;
 var routeJSON;
 var routePoints = new Array();
 var routeLine;
@@ -89,7 +90,7 @@ const startRouteStyle = { "11": new Style({
     }),
     text: new Text({
       font: '20px sans-serif',
-      text: 'Route Start',
+      text: 'Route start',
       fill: new Fill({
         color: 'Black',
       }),
@@ -98,18 +99,14 @@ const startRouteStyle = { "11": new Style({
     }),
   })
 };
-
 startRouteMarker = new Feature({
-  geometry: new Point(transform([-81.047220, 29.19024], "EPSG:4326", "EPSG:3857")),
+  geometry: new Point(transform([-81.048220, 29.19024], "EPSG:4326", "EPSG:3857")),
   size: 11,
 });
-
-
 const routeMarkerVecorSource = new VectorSource({
   features: [startRouteMarker],
   wrapX: false,
 });
-
 const routeMarkerVectorLayer = new VectorLayer({
   source: routeMarkerVecorSource,
   style: function (feature) {
@@ -117,6 +114,43 @@ const routeMarkerVectorLayer = new VectorLayer({
   },
 });
 routeMarkerVectorLayer.setVisible(false);
+
+const endRouteStyle = { "3": new Style({
+  image: new RegularShape({
+    points: 4,
+    radius: 9,
+    radius2: 15,
+    angle: 0,
+    fill: new Fill({ color: 'red' }),
+    stroke: new Stroke({ color: 'white', width: 1 }),
+  }),
+  text: new Text({
+    font: '20px sans-serif',
+    text: 'Route end',
+    fill: new Fill({
+      color: 'Black',
+    }),
+    offsetY: 15,
+    padding: [2, 2, 2, 2],
+  }),
+})
+};
+endRouteMarker = new Feature({
+  geometry: new Point(transform([-81.047220, 29.19024], "EPSG:4326", "EPSG:3857")),
+  size: 3,
+});
+const endRouteMarkerVecorSource = new VectorSource({
+  features: [endRouteMarker],
+  wrapX: false,
+});
+const endRouteMarkerVectorLayer = new VectorLayer({
+  source: endRouteMarkerVecorSource,
+  style: function (feature) {
+    return endRouteStyle[feature.get("size")];
+  },
+});
+endRouteMarkerVectorLayer.setVisible(false);
+
 const BlueLightvectorSource = new VectorSource({
   features: blueLightTower,
   wrapX: false
@@ -137,7 +171,7 @@ const mapView = new View({
 
 const map = new Map({
   target: 'map',
-  layers: [new TileLayer({source: new OSM() }), BlueLightvector, routeMarkerVectorLayer],
+  layers: [new TileLayer({source: new OSM() }), BlueLightvector, routeMarkerVectorLayer, endRouteMarkerVectorLayer],
   view: mapView,
   controls: defaultControls().extend([new ZoomSlider()]),
 });
@@ -145,7 +179,6 @@ const map = new Map({
 document.getElementById('startPathfinding').style.display ='none';
 document.getElementById('ToggleBlueLights').addEventListener('click', function () {
  BlueLightvector.setVisible(!BlueLightvector.getVisible());
- routeMarkerVectorLayer.setVisible(!routeMarkerVectorLayer.getVisible());
 });
 
 
@@ -159,12 +192,11 @@ document.getElementById('saveStart').addEventListener('click', function () {
   startY = posY;
   startLongLat = toLonLat([startX, startY]);
   document.getElementById('saveStart').textContent = 'Start point saved';
-
- getRoute = "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start="+startLongLat[0]+",%20"+ startLongLat[1] +"&end="+ endlongLat[0] + ",%20" + endlongLat[1];
- //console.log(startLongLat);
- //console.log(getRoute);
- startRouteMarker.getGeometry().setCoordinates(transform([startLongLat[0], startLongLat[1]], "EPSG:4326", "EPSG:3857"));
- //routeMarkerVectorLayer.setVisible(true);
+  getRoute = "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start="+startLongLat[0]+",%20"+ startLongLat[1] +"&end="+ endlongLat[0] + ",%20" + endlongLat[1];
+  //console.log(startLongLat);
+  //console.log(getRoute);
+  startRouteMarker.getGeometry().setCoordinates(transform([startLongLat[0], startLongLat[1]], "EPSG:4326", "EPSG:3857"));
+  routeMarkerVectorLayer.setVisible(true);
   routePointsVectorSource.clear();
 });
 
@@ -176,8 +208,10 @@ document.getElementById('saveStop').addEventListener('click', function () {
   endlongLat = toLonLat([endX, endY]);
   getRoute = "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start="+startLongLat[0]+",%20"+ startLongLat[1] +"&end="+ endlongLat[0] + ",%20" + endlongLat[1];
   document.getElementById('saveStop').textContent = 'End point saved';
+  endRouteMarker.getGeometry().setCoordinates(transform([endlongLat[0], endlongLat[1]], "EPSG:4326", "EPSG:3857"));
+  endRouteMarkerVectorLayer.setVisible(true);
   //console.log(getRoute);
-  //console.log(endlongLat);
+  console.log(endlongLat);
   routePointsVectorSource.clear();
 });
 
