@@ -185,6 +185,9 @@ document.getElementById('ToggleBlueLights').addEventListener('click', function (
 document.getElementById("popupClose").addEventListener('click', function () {
   document.querySelector('.ol-popup').style.display = 'none';
   document.getElementById('startPathfinding').style.display ='none';
+  routePointsVectorSource.clear();
+  routeMarkerVectorLayer.setVisible(false);
+  endRouteMarkerVectorLayer.setVisible(false);
 });
 
 document.getElementById('saveStart').addEventListener('click', function () {
