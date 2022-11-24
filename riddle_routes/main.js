@@ -42,6 +42,12 @@ var startLongLat = [-81.047220, 29.19024];
 var endlongLat = [-81.04934, 29.18818];
 var routePointsVectorLayer;
 var routePointsVectorSource;
+var setRouteClicked;
+var pathfindingStarted;
+
+document.getElementById("saveStart").style.display = "none";
+document.getElementById("saveStop").style.display = "none";
+document.getElementById("image").style.display = "none";
 
 for(let i = 0; i <= blueLightTowerCount; i++){
     blueLightTowerPositionX[i] = 29.18818 + Math.random() * 0.0001 * i;
@@ -173,7 +179,6 @@ const map = new Map({
   target: 'map',
   layers: [new TileLayer({source: new OSM() }), BlueLightvector, routeMarkerVectorLayer, endRouteMarkerVectorLayer],
   view: mapView,
-  controls: defaultControls().extend([new ZoomSlider()]),
 });
 
 document.getElementById('startPathfinding').style.display ='none';
@@ -191,6 +196,12 @@ document.getElementById("popupClose").addEventListener('click', function () {
 });
 
 document.getElementById('saveStart').addEventListener('click', function () {
+  setRouteClicked = true;
+  document.getElementById('saveStart').textContent = 'Click on map to set start point';
+  //document.getElementById("mySidenav").style.width = "0px";
+});
+
+function setStartRoute(){
   startX = posX;
   startY = posY;
   startLongLat = toLonLat([startX, startY]);
@@ -200,26 +211,38 @@ document.getElementById('saveStart').addEventListener('click', function () {
   //console.log(getRoute);
   startRouteMarker.getGeometry().setCoordinates(transform([startLongLat[0], startLongLat[1]], "EPSG:4326", "EPSG:3857"));
   routeMarkerVectorLayer.setVisible(true);
-  routePointsVectorSource.clear();
-});
-
-document.getElementById('saveStop').addEventListener('click', function () {
-  endX = posX;
-  endY = posY;
   document.getElementById('startPathfinding').style.display ='block';
   document.getElementById('startPathfinding').textContent = 'Start Pathfinding';
+  //create if satement to clear pathfinding when clicked again
+  if(pathfindingStarted == true){
+    routeVectorSource.clear();
+    pathfindingStarted = false;
+  }
+
+}
+
+
+ function setEndRoute(){
+  endX = posX;
+  endY = posY;
   endlongLat = toLonLat([endX, endY]);
   getRoute = "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start="+startLongLat[0]+",%20"+ startLongLat[1] +"&end="+ endlongLat[0] + ",%20" + endlongLat[1];
   document.getElementById('saveStop').textContent = 'End point saved';
   endRouteMarker.getGeometry().setCoordinates(transform([endlongLat[0], endlongLat[1]], "EPSG:4326", "EPSG:3857"));
-  endRouteMarkerVectorLayer.setVisible(true);
   //console.log(getRoute);
   console.log(endlongLat);
-  routePointsVectorSource.clear();
-});
+ 
+  endRouteMarkerVectorLayer.setVisible(true);
+  if(pathfindingStarted == true){
+    routePointsVectorSource.clear();
+    pathfindingStarted = false;
+  }
+};
 
 document.getElementById('startPathfinding').addEventListener('click', function () {
   
+  pathfindingStarted = true;
+
   document.getElementById('startPathfinding').textContent = 'Pathfinding working';
 
   var request = new XMLHttpRequest();
@@ -227,7 +250,7 @@ document.getElementById('startPathfinding').addEventListener('click', function (
   request.open('GET', getRoute);
 
   request.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
-
+  
   request.onreadystatechange = function () {
       if (this.readyState === 4) {
        console.log('Status:', this.status);
@@ -235,7 +258,7 @@ document.getElementById('startPathfinding').addEventListener('click', function (
         routeJSON = JSON.parse(this.responseText);
 
         for(let i = 0; i < routeJSON.features[0].geometry.coordinates.length; i++){
-         // console.log(routeJSON.features[0].geometry.coordinates[i]);
+        //console.log(routeJSON.features[0].geometry.coordinates[i]);
          routePoints[i] = (transform([routeJSON.features[0].geometry.coordinates[i][0], routeJSON.features[0].geometry.coordinates[i][1]], "EPSG:4326", "EPSG:3857"))  
         }
 
@@ -279,18 +302,51 @@ map.on('click', function (evt) {
   console.log(evt.pixel);
   posX = evt.coordinate[0];
   posY = evt.coordinate[1];
-  
+
+  document.getElementById('aboutBtn').style.display = 'block';
+  document.getElementById('clientsBtn').style.display = 'block';
+  document.getElementById('servicesBtn').style.display = 'block';
+  document.getElementById("directionsBtn").style.display = 'block';
+  document.getElementById("image").style.display = "none";
+
+  if(setRouteClicked == true){
+    setStartRoute();
+    setRouteClicked = false;
+  }
   var feature = map.forEachFeatureAtPixel(evt.pixel,
       function (feature) {
        
         if (feature.get('size') == 10) {
-         
-          
+          document.getElementById('aboutBtn').textContent = 'Blue Light Tower';
+          document.getElementById('clientsBtn').style.display = 'none';
+          document.getElementById('servicesBtn').style.display = 'none';
+          document.getElementById("image").style.display = "block";
           }
       });
-      document.querySelector('.ol-popup').style.top = evt.pixel[1] + 'px';
-      document.querySelector('.ol-popup').style.left = evt.pixel[0]  + 'px';
-      document.querySelector('.ol-popup').style.display = 'block';
+      
+      document.getElementById("mySidenav").style.width = "250px";
 });
+
+document.getElementById('hamburger').addEventListener('click', function () {
+  document.getElementById('hamburger').style.display = 'none';
+  document.getElementById('hamburger').style.cheon
+  document.getElementById("mySidenav").style.width = "550px";
+});
+document.getElementById('closeNav').addEventListener('click', function () {
+  document.getElementById("mySidenav").style.width = "0";
+  document.getElementById('hamburger').style.display = 'block';
+});
+
+document.getElementById("directionsBtn").addEventListener('click', function () {
+  document.getElementById('aboutBtn').style.display = 'none';
+  document.getElementById('clientsBtn').style.display = 'none';
+  document.getElementById('servicesBtn').style.display = 'none';
+  document.getElementById("directionsBtn").style.display = 'none';
+  document.getElementById("saveStart").style.display = "block";
+  document.getElementById("saveStop").style.display = "block";
+  document.getElementById("saveStop").textContent = 'End saved at ' + endlongLat[0] + ", " + endlongLat[1];
+  setEndRoute();
+});  
+
 
 map.render();
