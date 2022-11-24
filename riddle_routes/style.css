@@ -107,12 +107,28 @@ html, body {
 }
 .sidenav .closebtn {
   position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-  margin-left: 50px;
+  top: -20px;
+  right: 3px;
+  font-size: 50px;
+  margin-left: 5px;
 }
-
+.sidenav .objimage{
+  position: relative;
+  top: -30px;
+  width: 100%;
+}
+.sidenav .sideNavText{
+  font-size: 36px;
+}
+.sidenav .sideNavSearch{
+  position: relative;
+  top: -40px;
+  left: 10px;
+  margin: 0px;
+}
+.sidenav .startRoute, .endRoute, .startPathfinding{
+font-size: 36px;
+}
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}

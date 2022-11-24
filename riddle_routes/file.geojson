@@ -1,0 +1,39 @@
+{
+    "type": "FeatureCollection",
+    "crs": {
+        "type": "name",
+        "properties": {
+            "name": "EPSG:4326"
+        }
+    },
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -83.9483,
+                    43.7359
+                ]
+            },
+            "properties": {
+                "name": "Hoyle's Marina-Linwood: 98-08-0324-P",
+                "description": "135 S Linwood Beach, Linwood"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -83.9387,
+                    43.732
+                ]
+            },
+            "properties": {
+                "name": "Mitchel/Pajot CI-Linwood: 98-08-0554-P",
+                "description": "43.732, -83.9387"
+            }
+        }
+    ]
+}

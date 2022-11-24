@@ -1,27 +1,35 @@
 import Feature from "ol/Feature";
 import Map from "ol/Map";
-import Overlay from 'ol/Overlay';
+import Overlay from "ol/Overlay";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import View from "ol/View";
-import { Circle as CircleStyle, Fill, RegularShape, Stroke, Style, Text } from "ol/style";
+import {
+  Circle as CircleStyle,
+  Fill,
+  RegularShape,
+  Stroke,
+  Style,
+  Text,
+} from "ol/style";
 import { LineString, Point } from "ol/geom";
 import { getVectorContext } from "ol/render";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import { transform } from "ol/proj";
-import ZoomSlider from 'ol/control/ZoomSlider';
-import {defaults as defaultControls} from 'ol/control'
-import {fromLonLat, toLonLat} from 'ol/proj';
-import {toStringHDMS} from 'ol/coordinate';
-import Select from 'ol/interaction/Select';
-import Openrouteservice from 'openrouteservice-js'
-import GeoJSON from 'ol/format/GeoJSON';
+import ZoomSlider from "ol/control/ZoomSlider";
+import { defaults as defaultControls } from "ol/control";
+import { fromLonLat, toLonLat } from "ol/proj";
+import { toStringHDMS } from "ol/coordinate";
+import Select from "ol/interaction/Select";
+import Openrouteservice from "openrouteservice-js";
+import GeoJSON from "ol/format/GeoJSON";
 
-let orsDirections = new Openrouteservice.Directions({ api_key: "5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2"});
+let orsDirections = new Openrouteservice.Directions({
+  api_key: "5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2",
+});
 
-
-const pos = fromLonLat([-81.047220, 29.19024]);
+const pos = fromLonLat([-81.04722, 29.19024]);
 var posX;
 var posY;
 var blueLightTowerCount = 15;
@@ -37,46 +45,54 @@ var endRouteMarker;
 var routeJSON;
 var routePoints = new Array();
 var routeLine;
-var getRoute = "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start=-81.047220,%2029.19024&end=-81.04934,%2029.18818";
-var startLongLat = [-81.047220, 29.19024];
+var getRoute =
+  "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start=-81.047220,%2029.19024&end=-81.04934,%2029.18818";
+var startLongLat = [-81.04722, 29.19024];
 var endlongLat = [-81.04934, 29.18818];
 var routePointsVectorLayer;
 var routePointsVectorSource;
 var setRouteClicked;
 var pathfindingStarted;
+var buldingoutline;
 
 document.getElementById("saveStart").style.display = "none";
 document.getElementById("saveStop").style.display = "none";
 document.getElementById("image").style.display = "none";
 
-for(let i = 0; i <= blueLightTowerCount; i++){
-    blueLightTowerPositionX[i] = 29.18818 + Math.random() * 0.0001 * i;
-    blueLightTowerPositionY[i] = -81.04965 - Math.random() * 0.0001 * i;
+for (let i = 0; i <= blueLightTowerCount; i++) {
+  blueLightTowerPositionX[i] = 29.18818 + Math.random() * 0.0001 * i;
+  blueLightTowerPositionY[i] = -81.04965 - Math.random() * 0.0001 * i;
 }
 
 for (let i = 0; i < blueLightTowerCount; ++i) {
   blueLightTower[i] = new Feature({
-    geometry: new Point(transform([blueLightTowerPositionY[i], blueLightTowerPositionX[i]], "EPSG:4326", "EPSG:3857")),
-   size: 10,
+    geometry: new Point(
+      transform(
+        [blueLightTowerPositionY[i], blueLightTowerPositionX[i]],
+        "EPSG:4326",
+        "EPSG:3857"
+      )
+    ),
+    size: 10,
     type: "blueLightTower",
   });
-};
+}
 
 const BlueLightstyle = {
-  "10": new Style({
+  10: new Style({
     image: new RegularShape({
       points: 5,
       radius: 5,
       radius2: 7,
       angle: 0,
-      fill: new Fill({ color: 'blue' }),
-      stroke: new Stroke({ color: 'white', width: 1 }),
+      fill: new Fill({ color: "blue" }),
+      stroke: new Stroke({ color: "white", width: 1 }),
     }),
     text: new Text({
-      font: '12px sans-serif',
-      text: 'Blue Light Tower',
+      font: "12px sans-serif",
+      text: "Blue Light Tower",
       fill: new Fill({
-        color: 'blue',
+        color: "blue",
       }),
       offsetY: -10,
       padding: [2, 2, 2, 2],
@@ -84,29 +100,31 @@ const BlueLightstyle = {
   }),
 };
 
-
-const startRouteStyle = { "11": new Style({
+const startRouteStyle = {
+  11: new Style({
     image: new RegularShape({
       points: 4,
       radius: 9,
       radius2: 15,
       angle: 0,
-      fill: new Fill({ color: 'green' }),
-      stroke: new Stroke({ color: 'white', width: 1 }),
+      fill: new Fill({ color: "green" }),
+      stroke: new Stroke({ color: "white", width: 1 }),
     }),
     text: new Text({
-      font: '20px sans-serif',
-      text: 'Route start',
+      font: "20px sans-serif",
+      text: "Route start",
       fill: new Fill({
-        color: 'Black',
+        color: "Black",
       }),
       offsetY: 15,
       padding: [2, 2, 2, 2],
     }),
-  })
+  }),
 };
 startRouteMarker = new Feature({
-  geometry: new Point(transform([-81.048220, 29.19024], "EPSG:4326", "EPSG:3857")),
+  geometry: new Point(
+    transform([-81.04822, 29.19024], "EPSG:4326", "EPSG:3857")
+  ),
   size: 11,
 });
 const routeMarkerVecorSource = new VectorSource({
@@ -121,28 +139,31 @@ const routeMarkerVectorLayer = new VectorLayer({
 });
 routeMarkerVectorLayer.setVisible(false);
 
-const endRouteStyle = { "3": new Style({
-  image: new RegularShape({
-    points: 4,
-    radius: 9,
-    radius2: 15,
-    angle: 0,
-    fill: new Fill({ color: 'red' }),
-    stroke: new Stroke({ color: 'white', width: 1 }),
-  }),
-  text: new Text({
-    font: '20px sans-serif',
-    text: 'Route end',
-    fill: new Fill({
-      color: 'Black',
+const endRouteStyle = {
+  3: new Style({
+    image: new RegularShape({
+      points: 4,
+      radius: 9,
+      radius2: 15,
+      angle: 0,
+      fill: new Fill({ color: "red" }),
+      stroke: new Stroke({ color: "white", width: 1 }),
     }),
-    offsetY: 15,
-    padding: [2, 2, 2, 2],
+    text: new Text({
+      font: "20px sans-serif",
+      text: "Route end",
+      fill: new Fill({
+        color: "Black",
+      }),
+      offsetY: 15,
+      padding: [2, 2, 2, 2],
+    }),
   }),
-})
 };
 endRouteMarker = new Feature({
-  geometry: new Point(transform([-81.047220, 29.19024], "EPSG:4326", "EPSG:3857")),
+  geometry: new Point(
+    transform([-81.04722, 29.19024], "EPSG:4326", "EPSG:3857")
+  ),
   size: 3,
 });
 const endRouteMarkerVecorSource = new VectorSource({
@@ -159,128 +180,191 @@ endRouteMarkerVectorLayer.setVisible(false);
 
 const BlueLightvectorSource = new VectorSource({
   features: blueLightTower,
-  wrapX: false
+  wrapX: false,
 });
 
 const BlueLightvector = new VectorLayer({
   source: BlueLightvectorSource,
   style: function (blueLightTower) {
-  return BlueLightstyle[blueLightTower.get('size')];
+    return BlueLightstyle[blueLightTower.get("size")];
   },
+});
+
+const buildingsSource = new VectorSource({
+  url: 'buildings.geojson',
+  format: new GeoJSON(),
+});
+
+const buildingsLayer = new VectorLayer({
+  source: buildingsSource,
+  style: new Style({
+    fill: new Fill({
+      color: 'rgba(255, 255, 255, 0.1)',
+    }),
+    stroke: new Stroke({
+      color: '#319FD3',
+      width: 0,
+    }),
+  }),
 });
 
 const mapView = new View({
   center: transform([-81.04934, 29.18818], "EPSG:4326", "EPSG:3857"),
   zoom: 18,
-  extent: [-9024000, 3398000,  -9021000, 3401000 ],
+  //extent: [-9024000, 3398000, -9021000, 3401000],
 });
 
 const map = new Map({
-  target: 'map',
-  layers: [new TileLayer({source: new OSM() }), BlueLightvector, routeMarkerVectorLayer, endRouteMarkerVectorLayer],
+  target: "map",
+  layers: [
+    new TileLayer({ source: new OSM() }),
+    BlueLightvector,
+    routeMarkerVectorLayer,
+    endRouteMarkerVectorLayer,
+    buildingsLayer,
+  ],
   view: mapView,
 });
 
-document.getElementById('startPathfinding').style.display ='none';
-document.getElementById('ToggleBlueLights').addEventListener('click', function () {
- BlueLightvector.setVisible(!BlueLightvector.getVisible());
-});
+document.getElementById("startPathfinding").style.display = "none";
+document.getElementById("ToggleBlueLights").addEventListener("click", function () {
+  BlueLightvector.setVisible(!BlueLightvector.getVisible());
+  });
 
-
-document.getElementById("popupClose").addEventListener('click', function () {
-  document.querySelector('.ol-popup').style.display = 'none';
-  document.getElementById('startPathfinding').style.display ='none';
+document.getElementById("popupClose").addEventListener("click", function () {
+  document.querySelector(".ol-popup").style.display = "none";
+  document.getElementById("startPathfinding").style.display = "none";
   routePointsVectorSource.clear();
   routeMarkerVectorLayer.setVisible(false);
   endRouteMarkerVectorLayer.setVisible(false);
 });
 
-document.getElementById('saveStart').addEventListener('click', function () {
+document.getElementById("saveStart").addEventListener("click", function () {
   setRouteClicked = true;
-  document.getElementById('saveStart').textContent = 'Click on map to set start point';
+  document.getElementById("saveStart").textContent =
+    "Click on map to set start point";
   //document.getElementById("mySidenav").style.width = "0px";
 });
 
-function setStartRoute(){
+function setStartRoute() {
   startX = posX;
   startY = posY;
   startLongLat = toLonLat([startX, startY]);
-  document.getElementById('saveStart').textContent = 'Start point saved';
-  getRoute = "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start="+startLongLat[0]+",%20"+ startLongLat[1] +"&end="+ endlongLat[0] + ",%20" + endlongLat[1];
+  document.getElementById("saveStart").textContent = "Start point saved";
+  getRoute =
+    "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start=" +
+    startLongLat[0] +
+    ",%20" +
+    startLongLat[1] +
+    "&end=" +
+    endlongLat[0] +
+    ",%20" +
+    endlongLat[1];
+
   //console.log(startLongLat);
   //console.log(getRoute);
-  startRouteMarker.getGeometry().setCoordinates(transform([startLongLat[0], startLongLat[1]], "EPSG:4326", "EPSG:3857"));
+  startRouteMarker
+    .getGeometry()
+    .setCoordinates(
+      transform([startLongLat[0], startLongLat[1]], "EPSG:4326", "EPSG:3857")
+    );
   routeMarkerVectorLayer.setVisible(true);
-  document.getElementById('startPathfinding').style.display ='block';
-  document.getElementById('startPathfinding').textContent = 'Start Pathfinding';
+  document.getElementById("startPathfinding").style.display = "block";
+  document.getElementById("startPathfinding").textContent = "Start Pathfinding";
   //create if satement to clear pathfinding when clicked again
-  if(pathfindingStarted == true){
+  if (pathfindingStarted == true) {
     routeVectorSource.clear();
     pathfindingStarted = false;
   }
-
 }
 
-
- function setEndRoute(){
+function setEndRoute() {
   endX = posX;
   endY = posY;
   endlongLat = toLonLat([endX, endY]);
-  getRoute = "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start="+startLongLat[0]+",%20"+ startLongLat[1] +"&end="+ endlongLat[0] + ",%20" + endlongLat[1];
-  document.getElementById('saveStop').textContent = 'End point saved';
-  endRouteMarker.getGeometry().setCoordinates(transform([endlongLat[0], endlongLat[1]], "EPSG:4326", "EPSG:3857"));
+  getRoute =
+    "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62483b87bc36de04409eb746fa7da358e0c2&start=" +
+    startLongLat[0] +
+    ",%20" +
+    startLongLat[1] +
+    "&end=" +
+    endlongLat[0] +
+    ",%20" +
+    endlongLat[1];
+
+  document.getElementById("saveStop").textContent = "End point saved";
+  endRouteMarker
+    .getGeometry()
+    .setCoordinates(
+      transform([endlongLat[0], endlongLat[1]], "EPSG:4326", "EPSG:3857")
+    );
   //console.log(getRoute);
   console.log(endlongLat);
- 
+
   endRouteMarkerVectorLayer.setVisible(true);
-  if(pathfindingStarted == true){
+  if (pathfindingStarted == true) {
     routePointsVectorSource.clear();
     pathfindingStarted = false;
   }
-};
+}
 
-document.getElementById('startPathfinding').addEventListener('click', function () {
-  
-  pathfindingStarted = true;
+document.getElementById("startPathfinding").addEventListener("click", function () {
+    pathfindingStarted = true;
 
-  document.getElementById('startPathfinding').textContent = 'Pathfinding working';
+    document.getElementById("startPathfinding").textContent =
+      "Pathfinding working";
 
-  var request = new XMLHttpRequest();
+    var request = new XMLHttpRequest();
 
-  request.open('GET', getRoute);
+    request.open("GET", getRoute);
 
-  request.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
-  
-  request.onreadystatechange = function () {
+    request.setRequestHeader(
+      "Accept",
+      "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8"
+    );
+
+    request.onreadystatechange = function () {
       if (this.readyState === 4) {
-       console.log('Status:', this.status);
-        document.getElementById('startPathfinding').textContent = 'Pathfinding Complete';
+        console.log("Status:", this.status);
+        document.getElementById("startPathfinding").textContent =
+          "Pathfinding Complete";
         routeJSON = JSON.parse(this.responseText);
 
-        for(let i = 0; i < routeJSON.features[0].geometry.coordinates.length; i++){
-        //console.log(routeJSON.features[0].geometry.coordinates[i]);
-         routePoints[i] = (transform([routeJSON.features[0].geometry.coordinates[i][0], routeJSON.features[0].geometry.coordinates[i][1]], "EPSG:4326", "EPSG:3857"))  
+        for (
+          let i = 0;
+          i < routeJSON.features[0].geometry.coordinates.length;
+          i++
+        ) {
+          //console.log(routeJSON.features[0].geometry.coordinates[i]);
+          routePoints[i] = transform(
+            [
+              routeJSON.features[0].geometry.coordinates[i][0],
+              routeJSON.features[0].geometry.coordinates[i][1],
+            ],
+            "EPSG:4326",
+            "EPSG:3857"
+          );
         }
 
         console.log(routePoints);
 
         routeLine = new Feature({
-         geometry: new LineString(routePoints),
+          geometry: new LineString(routePoints),
         });
         //routePointsVectorSource.clear();
-         routePointsVectorSource = new VectorSource({
+        routePointsVectorSource = new VectorSource({
           features: [routeLine],
           wrapX: false,
         });
 
-         routePointsVectorLayer = new VectorLayer({
+        routePointsVectorLayer = new VectorLayer({
           source: routePointsVectorSource,
           style: new Style({
             fill: new Fill({
-              color: 'blue ',
+              color: "blue ",
             }),
             stroke: new Stroke({
-              color: 'blue',
+              color: "blue",
               width: 7,
             }),
           }),
@@ -288,65 +372,88 @@ document.getElementById('startPathfinding').addEventListener('click', function (
 
         map.addLayer(routePointsVectorLayer);
 
-
         //BlueLightvector.setVisible(false);
       }
-      };
-      request.send();
-   
+    };
+    request.send();
+  });
 
-});
+map.on("click", function (evt) {
 
-map.on('click', function (evt) {
-
-  console.log(evt.pixel);
+  //buldingoutline = toString(evt.coordinate);
+  console.log((evt.coordinate));
   posX = evt.coordinate[0];
   posY = evt.coordinate[1];
-
-  document.getElementById('aboutBtn').style.display = 'block';
-  document.getElementById('clientsBtn').style.display = 'block';
-  document.getElementById('servicesBtn').style.display = 'block';
-  document.getElementById("directionsBtn").style.display = 'block';
+  document.getElementById("aboutBtn").style.display = "block";
+  document.getElementById("aboutBtn").textContent = "About";
+  document.getElementById("clientsBtn").style.display = "block";
+  document.getElementById("servicesBtn").style.display = "block";
+  document.getElementById("directionsBtn").style.display = "block";
   document.getElementById("image").style.display = "none";
 
-  if(setRouteClicked == true){
+  if (setRouteClicked == true) {
     setStartRoute();
     setRouteClicked = false;
   }
-  var feature = map.forEachFeatureAtPixel(evt.pixel,
-      function (feature) {
-       
-        if (feature.get('size') == 10) {
-          document.getElementById('aboutBtn').textContent = 'Blue Light Tower';
-          document.getElementById('clientsBtn').style.display = 'none';
-          document.getElementById('servicesBtn').style.display = 'none';
-          document.getElementById("image").style.display = "block";
-          }
-      });
-      
-      document.getElementById("mySidenav").style.width = "250px";
+  var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+    console.log(feature.get('name'));
+
+    if (feature.get("size") == 10) {
+      document.getElementById("aboutBtn").textContent = "Blue Light Tower";
+      document.getElementById("clientsBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("image").src = "./blueLightTower.jpg";
+      document.getElementById("image").style.display = "block";
+    }
+    if (feature.get('building') == 419) {
+      document.getElementById("aboutBtn").textContent = "College of Arts and Sciences";
+      document.getElementById("clientsBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("image").src = './project-EmbryRiddleCollegeofArtsSciences01-1.jpg';
+      document.getElementById("image").style.display = "block";
+    }
+    if (feature.get('building') == 610) {
+      document.getElementById("aboutBtn").textContent = "Student Union & Engangement Center";
+      document.getElementById("clientsBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("image").src = './StudentUnionImage.jpg';
+      document.getElementById("image").style.display = "block";
+    }
+    if (feature.get('building') == 618) {
+      document.getElementById("aboutBtn").textContent = "Lehman College of Engineering";
+      document.getElementById("clientsBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("image").src = './LehmanBuilding.jpg';
+      document.getElementById("image").style.display = "block";
+    }
+
+
+
+  });
+
+  document.getElementById("mySidenav").style.width = "450px";
 });
 
-document.getElementById('hamburger').addEventListener('click', function () {
-  document.getElementById('hamburger').style.display = 'none';
-  document.getElementById('hamburger').style.cheon
+document.getElementById("hamburger").addEventListener("click", function () {
+  document.getElementById("hamburger").style.display = "none";
+  document.getElementById("hamburger").style.cheon;
   document.getElementById("mySidenav").style.width = "550px";
 });
-document.getElementById('closeNav').addEventListener('click', function () {
+document.getElementById("closeNav").addEventListener("click", function () {
   document.getElementById("mySidenav").style.width = "0";
-  document.getElementById('hamburger').style.display = 'block';
+  document.getElementById("hamburger").style.display = "block";
 });
 
-document.getElementById("directionsBtn").addEventListener('click', function () {
-  document.getElementById('aboutBtn').style.display = 'none';
-  document.getElementById('clientsBtn').style.display = 'none';
-  document.getElementById('servicesBtn').style.display = 'none';
-  document.getElementById("directionsBtn").style.display = 'none';
+document.getElementById("directionsBtn").addEventListener("click", function () {
+  document.getElementById("aboutBtn").style.display = "none";
+  document.getElementById("clientsBtn").style.display = "none";
+  document.getElementById("servicesBtn").style.display = "none";
+  document.getElementById("directionsBtn").style.display = "none";
   document.getElementById("saveStart").style.display = "block";
   document.getElementById("saveStop").style.display = "block";
-  document.getElementById("saveStop").textContent = 'End saved at ' + endlongLat[0] + ", " + endlongLat[1];
+  document.getElementById("saveStop").textContent =
+    "End saved at " + endlongLat[0] + ", " + endlongLat[1];
   setEndRoute();
-});  
-
+});
 
 map.render();
