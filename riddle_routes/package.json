@@ -1,6 +1,6 @@
 {
   "name": "riddle_routes",
-  "version": "0.2.3",
+  "version": "0.5.0",
   "scripts": {
     "start": "vite",
     "build": "vite build",
