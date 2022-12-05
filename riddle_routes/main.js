@@ -52,8 +52,9 @@ var endlongLat = [-81.04934, 29.18818];
 var routePointsVectorLayer;
 var routePointsVectorSource;
 var setRouteClicked;
-var pathfindingStarted;
+var pathfindingStarted = false;
 var distance;
+var displayXY = new Array(2);
 var evChargingStationLocations = [[-81.049812, 29.186605],[-81.045533, 29.188660],[-81.045552, 29.188636],[-81.048935, 29.190061],[-81.048966, 29.190037],[-81.052744, 29.191744],[-81.047117, 29.193713]];
 var evChargingStations = new Array(evChargingStationLocations.length);
 var HandicapParkingSpotsLocations = new Array();
@@ -370,7 +371,7 @@ document.getElementById("saveStart").addEventListener("click", function () {
   setRouteClicked = true;
   document.getElementById("saveStart").textContent =
     "Click on map to set start point";
-  //document.getElementById("mySidenav").style.width = "0px";
+ // document.getElementById("mySidenav").style.width = "0px";
 });
 
 function setStartRoute() {
@@ -502,15 +503,21 @@ map.on("click", function (evt) {
   console.log((evt.coordinate));
   posX = evt.coordinate[0];
   posY = evt.coordinate[1];
+  displayXY =  toLonLat(evt.coordinate)
 
+
+  displayXY[0] = displayXY[0].toFixed(5);
+  displayXY[1] = displayXY[1].toFixed(5);
 
   document.getElementById("aboutBtn").style.display = "block";
-  document.getElementById("aboutBtn").textContent = "About";
+  document.getElementById("aboutBtn").textContent = "You clicked at \n  " + displayXY;
   document.getElementById("clientsBtn").style.display = "block";
   document.getElementById("servicesBtn").style.display = "block";
   document.getElementById("directionsBtn").style.display = "block";
+  document.getElementById("directionsBtn").text = "Directions to clicked point";
   document.getElementById("image").style.display = "none";
-  
+  document.getElementById("saveStart").style.display = "none";
+  document.getElementById("saveStop").style.display = "none";
 
   if (setRouteClicked == true) {
     setStartRoute();
@@ -522,15 +529,19 @@ map.on("click", function (evt) {
     if (feature.get("size") == 10) {
       document.getElementById("aboutBtn").textContent = "Blue Light Tower";
       document.getElementById("clientsBtn").style.display = "none";
-      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "block";
+      document.getElementById("servicesBtn").textContent = "Location: " + displayXY;
       document.getElementById("image").src = "./blueLightTower.jpg";
       document.getElementById("image").style.display = "block";
+      document.getElementById("directionsBtn").text = "Directions to Blue Light Tower";
     }
     if (feature.get("size") == 20) {
       document.getElementById("aboutBtn").textContent = "Handicapped Parking";
       document.getElementById("clientsBtn").style.display = "none";
-      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "Block";
+      document.getElementById("servicesBtn").textContent = "Location: " + displayXY;
       document.getElementById("image").src = "./HandicapParking.png";
+      document.getElementById("directionsBtn").text = "Directions to Handicapped Parking Spot";
       document.getElementById("image").style.display = "block";
     }
     if (feature.get("size") == 30) {
@@ -539,12 +550,15 @@ map.on("click", function (evt) {
       document.getElementById("servicesBtn").style.display = "none";
       document.getElementById("image").src = "./BikeRack.jpg";
       document.getElementById("image").style.display = "block";
+      document.getElementById("directionsBtn").text = "Directions to Bike Rack";
     }
     if (feature.get("size") == 40) {
       document.getElementById("aboutBtn").textContent = "Ev Charging Station";
       document.getElementById("clientsBtn").style.display = "none";
-      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "Block";
+      document.getElementById("servicesBtn").textContent = "Location: " + displayXY;
       document.getElementById("image").src = "./chargingStation.jpg";
+      document.getElementById("directionsBtn").text = "Directions to Charging Station";
       document.getElementById("image").style.display = "block";
     }
     if (feature.get('building') == 419) {
@@ -552,6 +566,7 @@ map.on("click", function (evt) {
       document.getElementById("clientsBtn").style.display = "none";
       document.getElementById("servicesBtn").style.display = "none";
       document.getElementById("image").src = './project-EmbryRiddleCollegeofArtsSciences01-1.jpg';
+      document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
       document.getElementById("image").style.display = "block";
     }
     if (feature.get('building') == 610) {
@@ -560,6 +575,7 @@ map.on("click", function (evt) {
       document.getElementById("servicesBtn").style.display = "none";
       document.getElementById("image").src = './StudentUnionImage.jpg';
       document.getElementById("image").style.display = "block";
+      document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
     }
     if (feature.get('building') == 618) {
       document.getElementById("aboutBtn").textContent =  feature.get('name');
@@ -567,6 +583,7 @@ map.on("click", function (evt) {
       document.getElementById("servicesBtn").style.display = "none";
       document.getElementById("image").src = './LehmanBuilding.jpg';
       document.getElementById("image").style.display = "block";
+      document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
     }
     if (feature.get('building') == 602) {
       document.getElementById("aboutBtn").textContent =  feature.get('name');
@@ -574,6 +591,7 @@ map.on("click", function (evt) {
       document.getElementById("servicesBtn").style.display = "none";
       document.getElementById("image").src = './Jim W Handerson Adminstration & Welcome Center.jpg';
       document.getElementById("image").style.display = "block";
+      document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
     } 
     if (feature.get('building') == 261) {
       document.getElementById("aboutBtn").textContent = feature.get('name');
@@ -581,6 +599,15 @@ map.on("click", function (evt) {
       document.getElementById("servicesBtn").style.display = "none";
       document.getElementById("image").src = './eagle-fitness-center.jpg';
       document.getElementById("image").style.display = "block";
+      document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
+    }
+    if (feature.get('building') == 331) {
+      document.getElementById("aboutBtn").textContent = feature.get('name');
+      document.getElementById("clientsBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("image").src = './WillieMillerInstructionalCenter.jpg';
+      document.getElementById("image").style.display = "block";
+      document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
     }
 
   });
@@ -603,13 +630,18 @@ document.getElementById("closeNav").addEventListener("click", function () {
   document.getElementById("mySidenav").style.width = "0";
   document.getElementById("hamburger").style.display = "block";
 
+  console.log(pathfindingStarted);
+
+  if(pathfindingStarted == false){
+   endRouteMarkerVectorLayer.setVisible(false);
+   routeMarkerVectorLayer.setVisible(false);
+   document.getElementById("startPathfinding")
+  }
   if(pathfindingStarted == true){
     routePointsVectorSource.clear();
-    document.getElementById("saveStart").style.display = "none";
-    document.getElementById("startPathfinding").style.display = "none";
-    document.getElementById("saveStop").style.display = "none";
-    pathfindingStarted = false;
-  }
+    endRouteMarkerVectorLayer.setVisible(false);
+    routeMarkerVectorLayer.setVisible(false);
+   }
 
 
 });
