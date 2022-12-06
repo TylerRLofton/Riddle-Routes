@@ -55,6 +55,8 @@ var setRouteClicked;
 var pathfindingStarted = false;
 var distance;
 var displayXY = new Array(2);
+var florrPlanPath;
+var currentFloor = 1;
 var evChargingStationLocations = [[-81.049812, 29.186605],[-81.045533, 29.188660],[-81.045552, 29.188636],[-81.048935, 29.190061],[-81.048966, 29.190037],[-81.052744, 29.191744],[-81.047117, 29.193713]];
 var evChargingStations = new Array(evChargingStationLocations.length);
 var HandicapParkingSpotsLocations = new Array();
@@ -63,11 +65,20 @@ var HandicapParkingSpots = new Array(HandicapParkingSpotsLocations.length);
 var BikeRackLocations = new Array();
 BikeRackLocations = [[-81.05301389,	29.19035556],[-81.05301389,	29.19047778],[-81.05300833,	29.19064444],[-81.05298056,	29.19073889],[-81.05288611,	29.19085],[-81.05280833,	29.19093889],[-81.05258611,	29.19116389],[-81.05096944,	29.19045],[-81.05114167,	29.19045556],[-81.05168889,	29.19015833],[-81.05142222,	29.19062778],[-81.05045833,	29.19004722],[-81.04895556,	29.188375],[-81.04959167,	29.18822778],[-81.04963333,	29.18797222],[-81.05114444,	29.18710278],[-81.05091667,	29.18630833],[-81.05129167,	29.18719167],[-81.05096667,	29.18680278],[-81.05075278,	29.18663611],[-81.04448889,	29.189875]];
 var BikeRacks = new Array(BikeRackLocations.length);
+var buildingNumber = 0;
+document.getElementById("floorPlans").style.display = "none";
 document.getElementById("saveStart").style.display = "none";
 document.getElementById("saveStop").style.display = "none";
 document.getElementById("image").style.display = "none";
+document.getElementById("upFloor").style.display = "none";  
+document.getElementById("downFloor").style.display = "none";  
+
+
+
 blueLightTowerPositionX = [ 29.188023, 29.189273, 29.187171, 29.189105, 29.187809, 29.195856, 29.188898, 29.194542, 29.193504, 29.193037, 29.186448, 29.191851, 29.192116, 29.193837, 29.193429, 29.192857, 29.192114, 29.192647, 29.194058, 29.192204, 29.189695, 29.188954, 29.191735]
 blueLightTowerPositionY = [ -81.048705,-81.049556,-81.051308,-81.051467,-81.047514,-81.055217,-81.046075,-81.053793,-81.053045,-81.054257,-81.049739,-81.052743,-81.053628,-81.051109,-81.049903,-81.049600,-81.048675,-81.047916,-81.046517,-81.044828,-81.044228,-81.046141,-81.052686]
+
+
 
 
 for (let i = 0; i < blueLightTowerCount; ++i) {
@@ -403,6 +414,8 @@ function setStartRoute() {
   }
 }
 
+
+
 function setEndRoute() {
   endX = posX;
   endY = posY;
@@ -518,6 +531,9 @@ map.on("click", function (evt) {
   document.getElementById("image").style.display = "none";
   document.getElementById("saveStart").style.display = "none";
   document.getElementById("saveStop").style.display = "none";
+  document.getElementById("floorPlans").style.display = "none";
+  document.getElementById("upFloor").style.display = "none";  
+  document.getElementById("downFloor").style.display = "none";
 
   if (setRouteClicked == true) {
     setStartRoute();
@@ -547,7 +563,8 @@ map.on("click", function (evt) {
     if (feature.get("size") == 30) {
       document.getElementById("aboutBtn").textContent = "Bike Rack";
       document.getElementById("clientsBtn").style.display = "none";
-      document.getElementById("servicesBtn").style.display = "none";
+        document.getElementById("servicesBtn").style.display = "block";
+      document.getElementById("servicesBtn").textContent = " View Floor Plan";
       document.getElementById("image").src = "./BikeRack.jpg";
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to Bike Rack";
@@ -564,7 +581,9 @@ map.on("click", function (evt) {
     if (feature.get('building') == 419) {
       document.getElementById("aboutBtn").textContent = feature.get('name');
       document.getElementById("clientsBtn").style.display = "none";
-      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "block";
+      buildingNumber = feature.get('building');
+      document.getElementById("servicesBtn").textContent = " View Floor Plan";
       document.getElementById("image").src = './project-EmbryRiddleCollegeofArtsSciences01-1.jpg';
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
       document.getElementById("image").style.display = "block";
@@ -572,7 +591,9 @@ map.on("click", function (evt) {
     if (feature.get('building') == 610) {
       document.getElementById("aboutBtn").textContent =  feature.get('name');
       document.getElementById("clientsBtn").style.display = "none";
-      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "block";
+      buildingNumber = feature.get('building');
+      document.getElementById("servicesBtn").textContent = " View Floor Plan";
       document.getElementById("image").src = './StudentUnionImage.jpg';
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
@@ -580,7 +601,9 @@ map.on("click", function (evt) {
     if (feature.get('building') == 618) {
       document.getElementById("aboutBtn").textContent =  feature.get('name');
       document.getElementById("clientsBtn").style.display = "none";
-      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "block";
+      buildingNumber = feature.get('building');
+      document.getElementById("servicesBtn").textContent = " View Floor Plan";
       document.getElementById("image").src = './LehmanBuilding.jpg';
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
@@ -588,7 +611,9 @@ map.on("click", function (evt) {
     if (feature.get('building') == 602) {
       document.getElementById("aboutBtn").textContent =  feature.get('name');
       document.getElementById("clientsBtn").style.display = "none";
-      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "block";
+      buildingNumber = feature.get('building');
+      document.getElementById("servicesBtn").textContent = " View Floor Plan";
       document.getElementById("image").src = './Jim W Handerson Adminstration & Welcome Center.jpg';
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
@@ -596,7 +621,9 @@ map.on("click", function (evt) {
     if (feature.get('building') == 261) {
       document.getElementById("aboutBtn").textContent = feature.get('name');
       document.getElementById("clientsBtn").style.display = "none";
-      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "block";
+      buildingNumber = feature.get('building');
+      document.getElementById("servicesBtn").textContent = " View Floor Plan";
       document.getElementById("image").src = './eagle-fitness-center.jpg';
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
@@ -604,7 +631,9 @@ map.on("click", function (evt) {
     if (feature.get('building') == 331) {
       document.getElementById("aboutBtn").textContent = feature.get('name');
       document.getElementById("clientsBtn").style.display = "none";
-      document.getElementById("servicesBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "block";
+      buildingNumber = feature.get('building');
+      document.getElementById("servicesBtn").textContent = " View Floor Plan";
       document.getElementById("image").src = './WillieMillerInstructionalCenter.jpg';
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
@@ -613,6 +642,103 @@ map.on("click", function (evt) {
   });
 
   document.getElementById("mySidenav").style.width = "650px";
+});
+
+document.getElementById('servicesBtn').addEventListener('click', function(){
+  if (buildingNumber == 419) {
+    florrPlanPath =  '/Floor Plans/College of Arts and Science/01.png';
+    document.getElementById("upFloor").style.display = "block";  
+    document.getElementById("downFloor").style.display = "block";  
+    document.getElementById("floorPlans").src = florrPlanPath;
+    document.getElementById("floorPlans").style.display = "block";
+    document.getElementById("floorPlans").style.zIndex = 1;
+  }
+  if (buildingNumber == 610) {
+    document.getElementById("upFloor").style.display = "block";  
+    document.getElementById("downFloor").style.display = "block";  
+    document.getElementById("floorPlans").src = florrPlanPath;
+    document.getElementById("floorPlans").style.display = "block";
+    document.getElementById("floorPlans").style.zIndex = 1;
+  }
+  if (buildingNumber == 618) {
+    document.getElementById("upFloor").style.display = "block";  
+    document.getElementById("downFloor").style.display = "block";  
+    document.getElementById("floorPlans").src = florrPlanPath;
+    document.getElementById("floorPlans").style.display = "block";
+    document.getElementById("floorPlans").style.zIndex = 1;
+  }
+  if (buildingNumber == 602) {
+    document.getElementById("upFloor").style.display = "block";  
+    document.getElementById("downFloor").style.display = "block";  
+    document.getElementById("floorPlans").src = florrPlanPath;
+    document.getElementById("floorPlans").style.display = "block";
+    document.getElementById("floorPlans").style.zIndex = 1;
+  }
+  if (buildingNumber == 261) {
+    florrPlanPath = '/Floor Plans/Fitness Center/01.png';
+    document.getElementById("upFloor").style.display = "block";  
+    document.getElementById("downFloor").style.display = "block";  
+    document.getElementById("floorPlans").src = florrPlanPath;
+    document.getElementById("floorPlans").style.display = "block";
+    document.getElementById("floorPlans").style.zIndex = 1;
+  }
+  if (buildingNumber == 331) {
+    document.getElementById("upFloor").style.display = "block";  
+    document.getElementById("downFloor").style.display = "block";  
+    document.getElementById("floorPlans").src = florrPlanPath;
+    document.getElementById("floorPlans").style.display = "block";
+    document.getElementById("floorPlans").style.zIndex = 1;
+  }
+});
+
+document.getElementById('upFloor').addEventListener('click', function(){
+  if (buildingNumber == 419) {
+    if(currentFloor < 5){
+      currentFloor++;
+     florrPlanPath =  '/Floor Plans/College of Arts and Science/0'+ currentFloor+'.png';
+    };
+    document.getElementById("floorPlans").src = florrPlanPath;
+  }
+  if (buildingNumber == 610) {
+  }
+  if (buildingNumber == 618) {
+  }
+  if (buildingNumber == 602) {
+  }
+  if (buildingNumber == 261) {
+    if(currentFloor < 2){
+      currentFloor++;
+      florrPlanPath =  '/Floor Plans/Fitness Center/0'+ currentFloor+'.png';
+     };
+     document.getElementById("floorPlans").src = florrPlanPath;
+  }
+  if (buildingNumber == 331) {
+  }
+});
+
+document.getElementById('downFloor').addEventListener('click', function(){
+  if (buildingNumber == 419) {
+    if(currentFloor > 1){
+      currentFloor --;
+     florrPlanPath =  '/Floor Plans/College of Arts and Science/0'+ currentFloor+'.png';
+    };
+    document.getElementById("floorPlans").src = florrPlanPath;
+  }
+  if (buildingNumber == 610) {
+  }
+  if (buildingNumber == 618) {
+  }
+  if (buildingNumber == 602) {
+  }
+  if (buildingNumber == 261) {
+    if(currentFloor > 1){
+      currentFloor --;
+      florrPlanPath =  '/Floor Plans/Fitness Center/0'+currentFloor+'.png';
+     };
+     document.getElementById("floorPlans").src = florrPlanPath;
+  }
+  if (buildingNumber == 331) {
+  }
 });
 
 document.getElementById("hamburger").addEventListener("click", function () {
@@ -629,7 +755,9 @@ document.getElementById("hamburger").addEventListener("click", function () {
 document.getElementById("closeNav").addEventListener("click", function () {
   document.getElementById("mySidenav").style.width = "0";
   document.getElementById("hamburger").style.display = "block";
-
+  document.getElementById("floorPlans").style.display = "none";
+  document.getElementById("upFloor").style.display = "none";  
+  document.getElementById("downFloor").style.display = "none";  
   console.log(pathfindingStarted);
 
   if(pathfindingStarted == false){
@@ -649,7 +777,8 @@ document.getElementById("closeNav").addEventListener("click", function () {
 document.getElementById("directionsBtn").addEventListener("click", function () {
   document.getElementById("aboutBtn").style.display = "none";
   document.getElementById("clientsBtn").style.display = "none";
-  document.getElementById("servicesBtn").style.display = "none";
+  document.getElementById("servicesBtn").style.display = "block";
+  document.getElementById("servicesBtn").textContent = " View Floor Plan";
   document.getElementById("directionsBtn").style.display = "none";
   document.getElementById("saveStart").style.display = "block";
   document.getElementById("saveStop").style.display = "block";

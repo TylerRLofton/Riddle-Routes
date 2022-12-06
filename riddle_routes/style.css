@@ -129,6 +129,27 @@ html, body {
 .sidenav .startRoute, .endRoute, .startPathfinding{
 font-size: 36px;
 }
+.floorPLan{
+  position: absolute;
+  top: 12%;
+  left: 700px;
+  height: 75%;
+  width: 1250px;
+  z-index: -1;
+  border: rgb(255, 255, 255) solid 50px;
+}
+.btn-btn-primary-up{
+  position: absolute;
+  top: 150px;
+  right: 100px;
+  z-index: 100;
+}
+.btn-btn-primary-down{
+  position: absolute;
+  top: 800px;
+  right: 100px;
+  z-index: 100;
+}
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
