@@ -66,6 +66,7 @@ var BikeRackLocations = new Array();
 BikeRackLocations = [[-81.05301389,	29.19035556],[-81.05301389,	29.19047778],[-81.05300833,	29.19064444],[-81.05298056,	29.19073889],[-81.05288611,	29.19085],[-81.05280833,	29.19093889],[-81.05258611,	29.19116389],[-81.05096944,	29.19045],[-81.05114167,	29.19045556],[-81.05168889,	29.19015833],[-81.05142222,	29.19062778],[-81.05045833,	29.19004722],[-81.04895556,	29.188375],[-81.04959167,	29.18822778],[-81.04963333,	29.18797222],[-81.05114444,	29.18710278],[-81.05091667,	29.18630833],[-81.05129167,	29.18719167],[-81.05096667,	29.18680278],[-81.05075278,	29.18663611],[-81.04448889,	29.189875]];
 var BikeRacks = new Array(BikeRackLocations.length);
 var buildingNumber = 0;
+var nothingClicked = true;
 document.getElementById("floorPlans").style.display = "none";
 document.getElementById("saveStart").style.display = "none";
 document.getElementById("saveStop").style.display = "none";
@@ -550,6 +551,7 @@ map.on("click", function (evt) {
       document.getElementById("image").src = "./blueLightTower.jpg";
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to Blue Light Tower";
+      nothingClicked = false;
     }
     if (feature.get("size") == 20) {
       document.getElementById("aboutBtn").textContent = "Handicapped Parking";
@@ -559,15 +561,17 @@ map.on("click", function (evt) {
       document.getElementById("image").src = "./HandicapParking.png";
       document.getElementById("directionsBtn").text = "Directions to Handicapped Parking Spot";
       document.getElementById("image").style.display = "block";
+      nothingClicked = false;
     }
     if (feature.get("size") == 30) {
       document.getElementById("aboutBtn").textContent = "Bike Rack";
       document.getElementById("clientsBtn").style.display = "none";
-        document.getElementById("servicesBtn").style.display = "block";
-      document.getElementById("servicesBtn").textContent = " View Floor Plan";
+      document.getElementById("servicesBtn").style.display = "block";
+      document.getElementById("servicesBtn").textContent = "Location: " + displayXY;
       document.getElementById("image").src = "./BikeRack.jpg";
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to Bike Rack";
+      nothingClicked = false;
     }
     if (feature.get("size") == 40) {
       document.getElementById("aboutBtn").textContent = "Ev Charging Station";
@@ -577,6 +581,7 @@ map.on("click", function (evt) {
       document.getElementById("image").src = "./chargingStation.jpg";
       document.getElementById("directionsBtn").text = "Directions to Charging Station";
       document.getElementById("image").style.display = "block";
+      nothingClicked = false;
     }
     if (feature.get('building') == 419) {
       document.getElementById("aboutBtn").textContent = feature.get('name');
@@ -587,6 +592,7 @@ map.on("click", function (evt) {
       document.getElementById("image").src = './project-EmbryRiddleCollegeofArtsSciences01-1.jpg';
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
       document.getElementById("image").style.display = "block";
+      nothingClicked = false;
     }
     if (feature.get('building') == 610) {
       document.getElementById("aboutBtn").textContent =  feature.get('name');
@@ -597,6 +603,7 @@ map.on("click", function (evt) {
       document.getElementById("image").src = './StudentUnionImage.jpg';
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
+      nothingClicked = false;
     }
     if (feature.get('building') == 618) {
       document.getElementById("aboutBtn").textContent =  feature.get('name');
@@ -607,6 +614,7 @@ map.on("click", function (evt) {
       document.getElementById("image").src = './LehmanBuilding.jpg';
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
+      nothingClicked = false;
     }
     if (feature.get('building') == 602) {
       document.getElementById("aboutBtn").textContent =  feature.get('name');
@@ -617,6 +625,7 @@ map.on("click", function (evt) {
       document.getElementById("image").src = './Jim W Handerson Adminstration & Welcome Center.jpg';
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
+      nothingClicked = false;
     } 
     if (feature.get('building') == 261) {
       document.getElementById("aboutBtn").textContent = feature.get('name');
@@ -627,6 +636,7 @@ map.on("click", function (evt) {
       document.getElementById("image").src = './eagle-fitness-center.jpg';
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
+      nothingClicked = false;
     }
     if (feature.get('building') == 331) {
       document.getElementById("aboutBtn").textContent = feature.get('name');
@@ -637,6 +647,17 @@ map.on("click", function (evt) {
       document.getElementById("image").src = './WillieMillerInstructionalCenter.jpg';
       document.getElementById("image").style.display = "block";
       document.getElementById("directionsBtn").text = "Directions to " + feature.get('name');
+      nothingClicked = false;
+    }
+    else if(nothingClicked == true){
+      document.getElementById("aboutBtn").textContent = "Clicked Point";
+      document.getElementById("clientsBtn").style.display = "none";
+      document.getElementById("servicesBtn").style.display = "Block";
+      document.getElementById("servicesBtn").textContent = "Location: " + displayXY;
+      document.getElementById("image").src = "GenericRiddle.jpg";
+      document.getElementById("image").style.display = "block";
+      document.getElementById("directionsBtn").text = "Directions to Clicked Point";
+      
     }
 
   });
